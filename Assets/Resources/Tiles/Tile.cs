@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class Tile : MonoBehaviour
 {
     public bool IsWalkable { get; set; }
+    public bool IsBroken { get; set; }
 
     // Start is called before the first frame update
     void Start()
