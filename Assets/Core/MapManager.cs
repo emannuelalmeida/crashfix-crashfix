@@ -1,6 +1,7 @@
 ﻿using Assets.Tiles;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +11,10 @@ using UnityEngine;
 public class MapManager : MonoBehaviour
 {
     GridMap map;
+
+    TimeSpan timeRemaining;
+
+    bool gameStarted;
 
     // Start is called before the first frame update
     void Start()
@@ -40,15 +45,27 @@ public class MapManager : MonoBehaviour
         string theme = jsonObject.SelectToken("properties[0]").Value<string>("value");
         int timeInSeconds = jsonObject.SelectToken("properties[1]").Value<int>("value");
 
+        timeRemaining = TimeSpan.FromSeconds(timeInSeconds);
         Debug.Log($"Loaded Level {mapNumber} with Width {width}, Theme: {theme}, Time: {timeInSeconds}");
 
         map.Initialize(theme, Vector3.zero);
         map.ConstructTiles(ParseIntArray(mapIntArray, width));
+
+        gameStarted = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+       
+    }
+
+    private void FixedUpdate()
+    {
+        if (gameStarted && timeRemaining.TotalSeconds > 0)
+        {
+            timeRemaining = timeRemaining.Subtract(TimeSpan.FromSeconds(Time.fixedDeltaTime));
+            Debug.Log(timeRemaining.TotalSeconds.ToString("0"));
+        }
     }
 }
