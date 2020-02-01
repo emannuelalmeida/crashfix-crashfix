@@ -18,7 +18,7 @@ public class GridMap : ScriptableObject
     private Tile[,] tileMap;
 
     private string theme;
-    private string BasePath => $"Tiles/Prefabs/{theme}/";
+    private string basePath => $"Tiles/Prefabs/{theme}/";
 
     public Vector3 basePosition { get; private set; }
     public float TileLength { get { return tileLength; } }
@@ -129,6 +129,7 @@ public class GridMap : ScriptableObject
         }
         catch(Exception ex)
         {
+            Debug.LogError(ex.Message);
             var tileObject = Instantiate(Resources.Load(basePath + "ground"),
                         basePosition + new Vector3(tileLength * x, 0, tileLength * y),
                         Quaternion.identity);
