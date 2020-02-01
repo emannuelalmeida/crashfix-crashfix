@@ -8,6 +8,10 @@ public class GridMap : ScriptableObject
     public int Width { get; private set; }
     public int Height { get; private set; }
 
+    public float TotalW => tileLength * (Width - 1);
+
+    public float TotalH => tileLength * (Height - 1);
+
     private Tile[,] tileMap;
 
     private string theme;
@@ -35,9 +39,9 @@ public class GridMap : ScriptableObject
 
         tileMap = new Tile[Width, Height];
 
-        for(int x = 0; x < Width; x++)
+        for (int x = 0; x < Width; x++)
         {
-            for(int y = 0; y < Height; y++)
+            for (int y = 0; y < Height; y++)
             {
                 InitializeTile(tileArray[x, y], x, y);
             }
@@ -46,7 +50,7 @@ public class GridMap : ScriptableObject
 
     private void InitializeTile(TileType type, int x, int y)
     {
-        string resourceName = null;
+        string resourceName;
 
         switch (type)
         {
@@ -54,14 +58,11 @@ public class GridMap : ScriptableObject
                 resourceName = "ground";
                 break;
             case TileType.SOLID_WALL:
-                resourceName = "wall";                
+                resourceName = "wall";
                 break;
             default:
-                break;
+                return;
         }
-
-        if (resourceName == null)
-            return;
 
         Instantiate(Resources.Load(basePath + resourceName),
                     basePosition + new Vector3(tileLength * x, 0, tileLength * y),
