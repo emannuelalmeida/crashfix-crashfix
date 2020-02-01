@@ -18,7 +18,7 @@ public class GridMap : ScriptableObject
     private Tile[,] tileMap;
 
     private string theme;
-    private string basePath => $"Tiles/Prefabs/{theme}/";
+    private string BasePath => $"Tiles/Prefabs/{theme}/";
 
     public Vector3 basePosition { get; private set; }
     public float TileLength { get { return tileLength; } }
