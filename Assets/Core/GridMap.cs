@@ -1,6 +1,8 @@
 ﻿using Assets.Tiles;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 
 public class GridMap : ScriptableObject
@@ -56,6 +58,12 @@ public class GridMap : ScriptableObject
             case TileType.SOLID_WALL:
                 resourceName = "wall";                
                 break;
+            case TileType.BREAK_BLOCK:
+                resourceName = "box";
+                break;
+            case TileType.FIX_BLOCK:
+                resourceName = "bridge";
+                break;
             default:
                 break;
         }
@@ -63,8 +71,12 @@ public class GridMap : ScriptableObject
         if (resourceName == null)
             return;
 
-        Instantiate(Resources.Load(basePath + resourceName),
+        var tileObject = Instantiate(Resources.Load(basePath + resourceName),
                     basePosition + new Vector3(tileLength * x, 0, tileLength * y),
                     Quaternion.identity);
+
+        var tile = (tileObject as GameObject).GetComponent<Tile>();
+
+        tileMap[x, y] = tile;
     }
 }

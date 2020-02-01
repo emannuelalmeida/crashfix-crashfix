@@ -1,6 +1,10 @@
 ﻿using Assets.Tiles;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -8,16 +12,15 @@ public class MapManager : MonoBehaviour
 {
     GridMap map;
 
+    TimeSpan timeRemaining;
+
+    bool gameStarted;
+
     // Start is called before the first frame update
     void Start()
     {
         map = ScriptableObject.CreateInstance<GridMap>();
-        map.Initialize("Default", Vector3.zero);
-
-        var mapArray = new int[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 7, 7, 7, 7, 7, 1, 1, 7, 7, 1, 2, 2, 7, 2, 2, 2, 2, 2, 1, 2, 7, 2, 1, 2, 2, 7, 2, 1, 7, 7, 1, 7, 2, 8, 2, 1, 2, 2, 7, 2, 2, 2, 7, 2, 2, 2, 8, 2, 1, 2, 2, 7, 1, 1, 1, 1, 2, 2, 2, 8, 2, 1, 2, 2, 8, 2, 2, 2, 7, 3, 8, 8, 8, 1, 8, 2, 2, 8, 2, 2, 2, 2, 2, 2, 8, 8, 2, 8, 2, 2, 8, 2, 2, 2, 2, 1, 1, 1, 1, 2, 8, 2, 2, 8, 2, 2, 2, 2, 8, 2, 2, 1, 2, 8, 2, 2, 8, 2, 2, 2, 2, 8, 2, 2, 2, 2, 8, 2, 2, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 6, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
-
-
-        map.ConstructTiles(ParseIntArray(mapArray, 13));
+        LoadMap(1);
     }
 
     private TileType[,] ParseIntArray(int[] mapArray, int width)
@@ -32,9 +35,37 @@ public class MapManager : MonoBehaviour
         return typeArray;
     }
 
+    public void LoadMap(int mapNumber)
+    {
+        var jsonContent = File.ReadAllText($"Assets/Resources/Maps/level_{mapNumber}.json");
+        var jsonObject = JObject.Parse(jsonContent);
+
+        int width = jsonObject.GetValue("width").Value<int>();
+        int[] mapIntArray = jsonObject.SelectToken("layers[0].data").Values<int>().ToArray();
+        string theme = jsonObject.SelectToken("properties[0]").Value<string>("value");
+        int timeInSeconds = jsonObject.SelectToken("properties[1]").Value<int>("value");
+
+        timeRemaining = TimeSpan.FromSeconds(timeInSeconds);
+        Debug.Log($"Loaded Level {mapNumber} with Width {width}, Theme: {theme}, Time: {timeInSeconds}");
+
+        map.Initialize(theme, Vector3.zero);
+        map.ConstructTiles(ParseIntArray(mapIntArray, width));
+
+        gameStarted = true;
+    }
+
     // Update is called once per frame
     void Update()
     {
-        
+       
+    }
+
+    private void FixedUpdate()
+    {
+        if (gameStarted && timeRemaining.TotalSeconds > 0)
+        {
+            timeRemaining = timeRemaining.Subtract(TimeSpan.FromSeconds(Time.fixedDeltaTime));
+            Debug.Log(timeRemaining.TotalSeconds.ToString("0"));
+        }
     }
 }
