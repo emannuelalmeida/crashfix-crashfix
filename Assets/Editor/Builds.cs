@@ -32,9 +32,6 @@ namespace Editor
             var scenes = FindEnabledEditorScenes();
             EditorUserBuildSettings.SwitchActiveBuildTarget(build_target);
             var report = BuildPipeline.BuildPlayer(scenes, target_dir, build_target, build_options);
-//            if (res.Length > 0) {
-//                throw new Exception("BuildPlayer failure: " + res);
-//            }
         }
     }
 }
