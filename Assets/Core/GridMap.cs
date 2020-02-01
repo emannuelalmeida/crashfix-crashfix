@@ -10,10 +10,14 @@ public class GridMap : ScriptableObject
     public int Width { get; private set; }
     public int Height { get; private set; }
 
+    public float TotalW => tileLength * (Width - 1);
+
+    public float TotalH => tileLength * (Height - 1);
+
     private Tile[,] tileMap;
 
     private string theme;
-    private string basePath => $"Tiles/Prefabs/{theme}/";
+    private string BasePath => $"Tiles/Prefabs/{theme}/";
 
     private Vector3 basePosition;
 
@@ -37,9 +41,9 @@ public class GridMap : ScriptableObject
 
         tileMap = new Tile[Width, Height];
 
-        for(int x = 0; x < Width; x++)
+        for (int x = 0; x < Width; x++)
         {
-            for(int y = 0; y < Height; y++)
+            for (int y = 0; y < Height; y++)
             {
                 InitializeTile(tileArray[x, y], x, y);
             }
@@ -48,7 +52,7 @@ public class GridMap : ScriptableObject
 
     private void InitializeTile(TileType type, int x, int y)
     {
-        string resourceName = null;
+        string resourceName;
 
         switch (type)
         {
@@ -56,7 +60,7 @@ public class GridMap : ScriptableObject
                 resourceName = "ground";
                 break;
             case TileType.SOLID_WALL:
-                resourceName = "wall";                
+                resourceName = "wall";
                 break;
             case TileType.BREAK_BLOCK:
                 resourceName = "box";
@@ -65,13 +69,10 @@ public class GridMap : ScriptableObject
                 resourceName = "bridge";
                 break;
             default:
-                break;
+                return;
         }
 
-        if (resourceName == null)
-            return;
-
-        var tileObject = Instantiate(Resources.Load(basePath + resourceName),
+        var tileObject = Instantiate(Resources.Load(BasePath + resourceName),
                     basePosition + new Vector3(tileLength * x, 0, tileLength * y),
                     Quaternion.identity);
 
