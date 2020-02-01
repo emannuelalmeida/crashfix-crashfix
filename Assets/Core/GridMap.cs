@@ -26,8 +26,6 @@ public class GridMap : ScriptableObject
     {
         this.theme = theme;
         this.basePosition = basePosition;
-
-        ConstructTiles(new TileType[2, 2] { { TileType.GROUND, TileType.SOLID_WALL }, { TileType.SOLID_WALL, TileType.SOLID_WALL } });
     }
 
     public void ConstructTiles(TileType[,] tileArray)
@@ -48,15 +46,25 @@ public class GridMap : ScriptableObject
 
     private void InitializeTile(TileType type, int x, int y)
     {
+        string resourceName = null;
+
         switch (type)
         {
             case TileType.GROUND:
+                resourceName = "ground";
                 break;
             case TileType.SOLID_WALL:
-                Instantiate(Resources.Load(basePath + "wall"), basePosition + new Vector3(tileLength * x, 0, tileLength * y), Quaternion.identity);
+                resourceName = "wall";                
                 break;
             default:
                 break;
         }
+
+        if (resourceName == null)
+            return;
+
+        Instantiate(Resources.Load(basePath + resourceName),
+                    basePosition + new Vector3(tileLength * x, 0, tileLength * y),
+                    Quaternion.identity);
     }
 }
