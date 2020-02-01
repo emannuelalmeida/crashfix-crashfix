@@ -21,7 +21,14 @@ public class MapManager : MonoBehaviour
     {
         map = ScriptableObject.CreateInstance<GridMap>();
         LoadMap(1);
+        Camera.main.transform.position = PositionCam(map.TotalH, map.TotalW);
     }
+
+    static float Pow2(float x) => Mathf.Pow(x, 2.0f);
+
+    static float Hipotenuse(float x, float y) => Mathf.Sqrt(Pow2(x) + Pow2(y));
+
+    static Vector3 PositionCam(float height, float width) => new Vector3(width / 2.0f, (Hipotenuse(height, width)/ 2.0f) * Mathf.Sqrt(3.0f), height / 2.0f);
 
     private TileType[,] ParseIntArray(int[] mapArray, int width)
     {
