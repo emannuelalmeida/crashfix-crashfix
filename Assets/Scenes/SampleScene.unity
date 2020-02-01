@@ -290,19 +290,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-  m_LocalPosition: {x: 14, y: 15, z: 2.4}
-=======
   m_LocalPosition: {x: 0, y: 0, z: 0}
->>>>>>> Camera initial fixed position calculated by width and height of map
-=======
-  m_LocalPosition: {x: 0, y: 0, z: 0}
->>>>>>> Camera initial fixed position calculated by width and height of map
-=======
-  m_LocalPosition: {x: 0, y: 0, z: 0}
->>>>>>> 7e07363a83fb2c838ede8b14534f17d53a697771
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
