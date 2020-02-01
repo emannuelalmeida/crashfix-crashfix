@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using System;
 
 public class GridMap : ScriptableObject
 {
@@ -24,15 +25,18 @@ public class GridMap : ScriptableObject
 
     private const float tileLength = 1.6f;
 
+    private MapManager mapManager;
+
     public GridMap()
     {
 
     }
 
-    public void Initialize(string theme, Vector3 basePosition)
+    public void Initialize(string theme, Vector3 basePosition, MapManager manager)
     {
         this.theme = theme;
         this.basePosition = basePosition;
+        this.mapManager = manager;
     }
 
     public void ConstructTiles(TileType[,] tileArray)
@@ -71,13 +75,21 @@ public class GridMap : ScriptableObject
                 resourceName = "break_block";
                 break;
             case TileType.BREAK_START:
-                resourceName = "break_start";
+                resourceName = "ground";
+                //Instantiate(Resources.Load("actors/breaker"),
+                //            basePosition + new Vector3(tileLength * x, 0, tileLength * y),
+                //            Quaternion.identity);
                 break;
             case TileType.FIX_BLOCK:
                 resourceName = "fix_block";
                 break;
             case TileType.FIX_START:
-                resourceName = "fix_start";
+                resourceName = "ground";
+                var fixer = Resources.Load("Actors/fixer");
+                var obj = Instantiate(fixer,
+                            basePosition + new Vector3(tileLength * x - tileLength /2f, 2.4f, tileLength * y -tileLength/2f),
+                            Quaternion.identity) as GameObject;
+                obj.GetComponent<PlayerActor>().Initialize(mapManager, new Position(x,y));
                 break;
             case TileType.BOTH_ACT_BLOCK:
                 resourceName = "both_act";
@@ -104,14 +116,25 @@ public class GridMap : ScriptableObject
                 return;
         }
 
+        try
+        {
+            var tileObject = Instantiate(Resources.Load(basePath + resourceName),
+                        basePosition + new Vector3(tileLength * x, 0, tileLength * y),
+                        Quaternion.identity);
+            var tile = (tileObject as GameObject).GetComponent<Tile>();
 
-        var tileObject = Instantiate(Resources.Load(basePath + resourceName),
-                    basePosition + new Vector3(tileLength * x, 0, tileLength * y),
-                    Quaternion.identity);
+            tileMap[x, y] = tile;
+        }
+        catch(Exception ex)
+        {
+            Debug.LogError(ex.Message);
+        }
 
-        var tile = (tileObject as GameObject).GetComponent<Tile>();
-
-        tileMap[x, y] = tile;
+       
     }
 
+    public Tile GetTile(int x, int y)
+    {
+        return tileMap[x, y];
+    }
 }
