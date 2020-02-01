@@ -35,7 +35,7 @@ $UNITY_HOME/Unity -batchmode -nographics -executeMethod Editor.Builds.PerformWeb
                                 git remote add originssh git@github.com:emannuelalmeida/crashfix-crashfix.git
                                 git checkout master
                                 git rm -r docs
-                                mv Build/crashfix-crashfix docs
+                                mv Build/crashfix-crashfix-web docs
                                 git add docs
                                 git commit 'updating github pages'
                                 git push originssh master
