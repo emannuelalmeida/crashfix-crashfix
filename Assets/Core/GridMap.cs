@@ -13,7 +13,8 @@ public class GridMap : ScriptableObject
     private string theme;
     private string basePath => $"Tiles/Prefabs/{theme}/";
 
-    private Vector3 basePosition;
+    public Vector3 basePosition { get; private set; }
+    public float TileLength { get { return tileLength; } }
 
     private const float tileLength = 1.6f;
 
@@ -44,6 +45,10 @@ public class GridMap : ScriptableObject
         }
     }
 
+    public bool IsWalkablePosition(Position position){
+        return tileMap[position.X, position.Y].IsWalkable;
+    }
+
     private void InitializeTile(TileType type, int x, int y)
     {
         string resourceName = null;
@@ -56,15 +61,46 @@ public class GridMap : ScriptableObject
             case TileType.SOLID_WALL:
                 resourceName = "wall";                
                 break;
-            default:
+            case TileType.BREAK_BLOCK:
+                resourceName = "break_block";
                 break;
+            case TileType.BREAK_START:
+                resourceName = "break_start";
+                break;
+            case TileType.FIX_BLOCK:
+                resourceName = "fix_block";
+                break;
+            case TileType.FIX_START:
+                resourceName = "fix_start";
+                break;
+            case TileType.BOTH_ACT_BLOCK:
+                resourceName = "both_act";
+                break;
+            case TileType.BUTTON:
+                resourceName = "button";
+                break;
+            case TileType.DOOR:
+                resourceName = "door";
+                break;
+            case TileType.HOLE:
+                resourceName = "hole";
+                break;
+            case TileType.BREAK_EXIT:
+                resourceName = "break_exit";
+                break;
+            case TileType.FIX_EXIT:
+                resourceName = "fix_exit";
+                break;
+            case TileType.EXIT_BOTH:
+                resourceName = "exit_both";
+                break;
+            default:
+                return;
         }
-
-        if (resourceName == null)
-            return;
 
         Instantiate(Resources.Load(basePath + resourceName),
                     basePosition + new Vector3(tileLength * x, 0, tileLength * y),
                     Quaternion.identity);
     }
+
 }

@@ -1,4 +1,5 @@
 ﻿using Assets.Tiles;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +9,17 @@ public class MapManager : MonoBehaviour
 {
     GridMap map;
 
+    public Position FixPosition { get; set; }
+
+    public Position BreakPosition { get; set; }
+
     // Start is called before the first frame update
     void Start()
     {
         map = ScriptableObject.CreateInstance<GridMap>();
         map.Initialize("Default", Vector3.zero);
 
-        var mapArray = new int[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 7, 7, 7, 7, 7, 1, 1, 7, 7, 1, 2, 2, 7, 2, 2, 2, 2, 2, 1, 2, 7, 2, 1, 2, 2, 7, 2, 1, 7, 7, 1, 7, 2, 8, 2, 1, 2, 2, 7, 2, 2, 2, 7, 2, 2, 2, 8, 2, 1, 2, 2, 7, 1, 1, 1, 1, 2, 2, 2, 8, 2, 1, 2, 2, 8, 2, 2, 2, 7, 3, 8, 8, 8, 1, 8, 2, 2, 8, 2, 2, 2, 2, 2, 2, 8, 8, 2, 8, 2, 2, 8, 2, 2, 2, 2, 1, 1, 1, 1, 2, 8, 2, 2, 8, 2, 2, 2, 2, 8, 2, 2, 1, 2, 8, 2, 2, 8, 2, 2, 2, 2, 8, 2, 2, 2, 2, 8, 2, 2, 8, 8, 8, 8, 1, 1, 8, 8, 8, 8, 6, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
+        var mapArray = new int[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 1, 1, 1, 1, 1, 2, 2, 2, 1, 2, 1, 2, 2, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1, 1, 2, 1, 2, 2, 1, 2, 2, 2, 2, 1, 1, 1, 1, 2, 1, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
 
 
         map.ConstructTiles(ParseIntArray(mapArray, 13));
@@ -32,9 +37,51 @@ public class MapManager : MonoBehaviour
         return typeArray;
     }
 
+    private void Move(Position delta)
+    {
+        MoveActor(delta, true); // First, move the breaker
+        MoveActor(delta, false); // Now, moving the fixer
+    }
+
     // Update is called once per frame
     void Update()
     {
-        
+        ProcessInput();
+        DrawActors();
+    }
+
+    private void DrawActors()
+    {
+        Instantiate(Resources.Load("actors/breaker"),
+                    map.basePosition + new Vector3(map.TileLength * BreakPosition.X, 0, map.TileLength * BreakPosition.Y),
+                    Quaternion.identity);
+
+        Instantiate(Resources.Load("actors/fixer"),
+                    map.basePosition + new Vector3(map.TileLength * FixPosition.X, 0, map.TileLength * FixPosition.Y),
+                    Quaternion.identity);
+    }
+
+    private void MoveActor(Position delta, bool breaker)
+    {
+        Position position = breaker ? BreakPosition : FixPosition;
+
+        if (map.IsWalkablePosition(position + delta))
+        {
+            position += delta;
+            //After moving, check whether there is something to do on this block
+        }
+
+        else
+        {
+            //Check whether you can perform some action there
+        }
+    }
+
+    private void ProcessInput()
+    {
+       float yDelta = Input.GetAxis("Vertical") * Time.deltaTime;
+       float xDelta = Input.GetAxis("Horizontal") * Time.deltaTime;
+
+       Move(new Position { X = (int)xDelta, Y = (int)yDelta });
     }
 }
