@@ -12,11 +12,12 @@ namespace Assets.Tiles
         SOLID_WALL = 2,
         EXIT_BOTH = 3,
         DOOR = 4,
-        P1_START = 5,
-        P2_START = 6,
+        FIX_START = 5,
+        BREAK_START = 6,
         FIX_BLOCK = 7,
         BREAK_BLOCK = 8,
         HOLE = 9,
-        BUTTON = 10
+        BUTTON = 10,
+        BOTH_ACT_BLOCK = 11
     }
 }
