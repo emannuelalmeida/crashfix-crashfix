@@ -16,6 +16,10 @@ public class MapManager : MonoBehaviour
 
     bool gameStarted;
 
+    public Position FixPosition { get; set; }
+
+    public Position BreakPosition { get; set; }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,6 +46,12 @@ public class MapManager : MonoBehaviour
         return typeArray;
     }
 
+    private void Move(Position delta)
+    {
+        MoveActor(delta, true); // First, move the breaker
+        MoveActor(delta, false); // Now, moving the fixer
+    }
+
     public void LoadMap(int mapNumber)
     {
         var jsonContent = File.ReadAllText($"Assets/Resources/Maps/level_{mapNumber}.json");
@@ -64,7 +74,43 @@ public class MapManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
+        ProcessInput();
+        DrawActors();
+    }
+
+    private void DrawActors()
+    {
+        Instantiate(Resources.Load("actors/breaker"),
+                    map.basePosition + new Vector3(map.TileLength * BreakPosition.X, 0, map.TileLength * BreakPosition.Y),
+                    Quaternion.identity);
+
+        Instantiate(Resources.Load("actors/fixer"),
+                    map.basePosition + new Vector3(map.TileLength * FixPosition.X, 0, map.TileLength * FixPosition.Y),
+                    Quaternion.identity);
+    }
+
+    private void MoveActor(Position delta, bool breaker)
+    {
+        Position position = breaker ? BreakPosition : FixPosition;
+
+        if (map.IsWalkablePosition(position + delta))
+        {
+            position += delta;
+            //After moving, check whether there is something to do on this block
+        }
+
+        else
+        {
+            //Check whether you can perform some action there
+        }
+    }
+
+    private void ProcessInput()
+    {
+       float yDelta = Input.GetAxis("Vertical") * Time.deltaTime;
+       float xDelta = Input.GetAxis("Horizontal") * Time.deltaTime;
+
+       Move(new Position { X = (int)xDelta, Y = (int)yDelta });
     }
 
     private void FixedUpdate()
