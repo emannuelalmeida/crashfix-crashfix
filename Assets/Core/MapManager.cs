@@ -1,4 +1,5 @@
 ﻿using Assets.Tiles;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,6 @@ public class MapManager : MonoBehaviour
 {
     GridMap map;
 
-    // Start is called before the first frame update
     void Start()
     {
         map = ScriptableObject.CreateInstance<GridMap>();
@@ -18,6 +18,25 @@ public class MapManager : MonoBehaviour
 
 
         map.ConstructTiles(ParseIntArray(mapArray, 13));
+
+        Camera.main.transform.position = PositionCam(map.Width, map.Height);
+    }
+
+    static float Pow2(float x) => Mathf.Pow(x, 2.0f);
+
+    static float Hipotenuse(float x, float y) => Mathf.Sqrt(Pow2(x) + Pow2(y));
+
+    static Vector3 PositionCam(float height, float width)
+    {
+        var widthPadding = (width * 8 - 5 * height) / 10;
+
+        var heightPadding = widthPadding;
+
+        return new Vector3(
+        (width + widthPadding) / 2.0f, 2 +
+        Hipotenuse(height + heightPadding, width + widthPadding) * Mathf.Sqrt(3) / 2.0f,
+        (height + heightPadding) / 2.0f);
+
     }
 
     private TileType[,] ParseIntArray(int[] mapArray, int width)
@@ -32,9 +51,8 @@ public class MapManager : MonoBehaviour
         return typeArray;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
