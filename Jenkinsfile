@@ -37,7 +37,7 @@ $UNITY_HOME/Unity -batchmode -nographics -executeMethod Editor.Builds.PerformWeb
                                 git rm -r docs
                                 mv Build/crashfix-crashfix-web docs
                                 git add docs
-                                git commit 'updating github pages'
+                                git commit -m 'updating github pages'
                                 git push originssh master
                             '''
                         }
