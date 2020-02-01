@@ -18,6 +18,8 @@ namespace Assets.Tiles
         BREAK_BLOCK = 8,
         HOLE = 9,
         BUTTON = 10,
-        BOTH_ACT_BLOCK = 11
+        BOTH_ACT_BLOCK = 11,
+        FIX_EXIT = 12,
+        BREAK_EXIT = 13
     }
 }

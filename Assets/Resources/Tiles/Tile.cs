@@ -29,12 +29,12 @@ public abstract class Tile : MonoBehaviour
 
     }
 
-    public virtual void OnStepWrench()
+    public virtual void OnStepBreaker()
     {
 
     }
 
-    public virtual void OnStepHammer()
+    public virtual void OnStepFixer()
     {
 
     }
