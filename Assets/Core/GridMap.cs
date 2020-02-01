@@ -76,9 +76,11 @@ public class GridMap : ScriptableObject
                 break;
             case TileType.BREAK_START:
                 resourceName = "ground";
-                //Instantiate(Resources.Load("actors/breaker"),
-                //            basePosition + new Vector3(tileLength * x, 0, tileLength * y),
-                //            Quaternion.identity);
+                var breaker = Resources.Load("Actors/breaker");
+                var breakerObj = Instantiate(breaker,
+                            basePosition + new Vector3(tileLength * x - tileLength / 2f, 2.4f, tileLength * y - tileLength / 2f),
+                            Quaternion.identity) as GameObject;
+                breakerObj.GetComponent<PlayerActor>().Initialize(mapManager, new Position(x, y));
                 break;
             case TileType.FIX_BLOCK:
                 resourceName = "fix_block";
@@ -86,10 +88,10 @@ public class GridMap : ScriptableObject
             case TileType.FIX_START:
                 resourceName = "ground";
                 var fixer = Resources.Load("Actors/fixer");
-                var obj = Instantiate(fixer,
+                var fixerObj = Instantiate(fixer,
                             basePosition + new Vector3(tileLength * x - tileLength /2f, 2.4f, tileLength * y -tileLength/2f),
                             Quaternion.identity) as GameObject;
-                obj.GetComponent<PlayerActor>().Initialize(mapManager, new Position(x,y));
+                fixerObj.GetComponent<PlayerActor>().Initialize(mapManager, new Position(x,y));
                 break;
             case TileType.BOTH_ACT_BLOCK:
                 resourceName = "both_act";
@@ -127,7 +129,12 @@ public class GridMap : ScriptableObject
         }
         catch(Exception ex)
         {
-            Debug.LogError(ex.Message);
+            var tileObject = Instantiate(Resources.Load(basePath + "ground"),
+                        basePosition + new Vector3(tileLength * x, 0, tileLength * y),
+                        Quaternion.identity);
+            var tile = (tileObject as GameObject).GetComponent<Tile>();
+
+            tileMap[x, y] = tile;
         }
 
        

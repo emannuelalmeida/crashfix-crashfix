@@ -7,9 +7,9 @@ using UnityEngine;
 
 namespace Assets.Actors
 {
-    public class Fixer : PlayerActor
+    public class Breaker : PlayerActor
     {
-        public Fixer()
+        public Breaker()
         {
 
         }
@@ -26,19 +26,19 @@ namespace Assets.Actors
         {
             if (Input.GetAxis("Vertical") > sensitivity)
             {
-                TryMove(Position.X, Position.Y + 1);
+                TryMove(Position.X, Position.Y - 1);
             }
             else if (Input.GetAxis("Vertical") < -sensitivity)
             {
-                TryMove(Position.X, Position.Y - 1);
+                TryMove(Position.X, Position.Y + 1);
             }
             else if (Input.GetAxis("Horizontal") > sensitivity)
             {
-                TryMove(Position.X + 1, Position.Y);
+                TryMove(Position.X - 1, Position.Y);
             }
             else if (Input.GetAxis("Horizontal") < -sensitivity)
             {
-                TryMove(Position.X - 1, Position.Y);
+                TryMove(Position.X + 1, Position.Y);
             }
         }
 
