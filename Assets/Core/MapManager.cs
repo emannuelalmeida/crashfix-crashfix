@@ -10,7 +10,9 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MapManager : MonoBehaviour
+namespace Core
+{
+    public class MapManager : MonoBehaviour
 {
     private GridMap map;
     private GameState gameState = GameState.Start;
@@ -18,6 +20,7 @@ public class MapManager : MonoBehaviour
     public TimeSpan TimeRemaining { get; private set; }
 
     int TimeInSeconds { get; set; }
+    private int InitialTimeInSeconds { get; set; }
 
     private bool gameStarted;
     private int currentMap;
@@ -73,10 +76,10 @@ public class MapManager : MonoBehaviour
         int width = jsonObject.GetValue("width").Value<int>();
         int[] mapIntArray = jsonObject.SelectToken("layers[0].data").Values<int>().ToArray();
         string theme = jsonObject.SelectToken("properties[0]").Value<string>("value");
-        int timeInSeconds = jsonObject.SelectToken("properties[1]").Value<int>("value");
+        InitialTimeInSeconds = jsonObject.SelectToken("properties[1]").Value<int>("value");
 
-        TimeRemaining = TimeSpan.FromSeconds(timeInSeconds);
-        Debug.Log($"Loaded Level {mapName} with Width {width}, Theme: {theme}, Time: {timeInSeconds}");
+        TimeRemaining = TimeSpan.FromSeconds(InitialTimeInSeconds);
+        Debug.Log($"Loaded Level {mapName} with Width {width}, Theme: {theme}, Time: {InitialTimeInSeconds}");
 
         map.Initialize(theme, Vector3.zero, this);
         map.ConstructTiles(ParseIntArray(mapIntArray, width));
@@ -111,8 +114,38 @@ public class MapManager : MonoBehaviour
             else
                 timer.color = Color.white;
         }
-        else if (TimeRemaining.TotalSeconds < 1)
-            gameState = GameState.GameOver;
+        else if (TimeRemaining.TotalSeconds < 1) 
+            gameOver();
+    }
+
+    private void gameOver()
+    {
+        gameState = GameState.GameOver;
+        restartButton(1f, true);
+    }
+
+    public void Restart()
+    {
+        gameState = GameState.Playing;
+        TimeRemaining = TimeSpan.FromSeconds(InitialTimeInSeconds);
+        restartButton(0f, false);
+    }
+
+    private void restartButton(float alpha, bool raycast)
+    {
+        var restart = GameObject.Find("RestartButton");
+        var images = GameObject.FindObjectsOfType<Image>();
+        foreach (var image in images)
+        {
+            if (image.name == "RestartButton")
+            {
+                image.raycastTarget = raycast;
+                var temp = image.color;
+                temp.a = alpha;
+                image.color = temp;
+                break;
+            }
+        }
     }
 
     public bool CanMove(int x, int y)
@@ -155,4 +188,6 @@ public class MapManager : MonoBehaviour
             gameState = GameState.Victory;
         }
     }
+}
+
 }

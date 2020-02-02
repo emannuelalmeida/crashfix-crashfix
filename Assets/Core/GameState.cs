@@ -4,4 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public enum GameState { Start, Playing, GameOver, Victory }
+namespace Core
+{
+    public enum GameState { Start, Playing, GameOver, Victory }
+}
+

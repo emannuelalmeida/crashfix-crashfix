@@ -7,7 +7,9 @@ using UnityEngine;
 using System;
 using Assets.Actors;
 
-public class GridMap : ScriptableObject
+namespace Core
+{
+    public class GridMap : ScriptableObject
 {
     public int Width { get; private set; }
     public int Height { get; private set; }
@@ -167,4 +169,6 @@ public class GridMap : ScriptableObject
         }
         catch { return null; }
     }
+}
+
 }
