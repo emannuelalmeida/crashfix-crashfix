@@ -59,8 +59,8 @@ namespace Core
 
     public void RestartCurrentLevel()
     {
-            string mapUrl = $"Assets/Resources/Maps/level_{currentMap}.json";
-            LoadMap(mapUrl, $"level_{currentMap}");
+            string nextMapUrl = $"Maps/level_{currentMap}";
+            var mapData = Resources.Load<TextAsset>(nextMapUrl);
             restartButton(0f, false);
     }
 
