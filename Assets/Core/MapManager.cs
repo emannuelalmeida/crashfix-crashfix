@@ -156,7 +156,7 @@ namespace Core
         var images = GameObject.FindObjectsOfType<Image>();
         foreach (var image in images)
         {
-            if (image.name == "RestartButton")
+            if (image.name == name)
             {
                 image.raycastTarget = alpha > 0f;
                 var temp = image.color;
