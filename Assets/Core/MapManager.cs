@@ -78,7 +78,7 @@ namespace Core
 
     private void WinGameScreen()
     {
-        //
+        SceneManager.LoadScene("Vitoria");
     }
 
     public void NextStageButton()
