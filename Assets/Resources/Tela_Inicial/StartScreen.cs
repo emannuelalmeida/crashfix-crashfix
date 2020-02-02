@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class StartScreen : MonoBehaviour
 {
@@ -20,5 +22,15 @@ public class StartScreen : MonoBehaviour
     public void goToGameStart()
     {
         SceneManager.LoadScene("SampleScene");
+    }
+
+    public void OnPointerEnter()
+    {
+        GetComponent<Image>().color = Color.gray;
+    }
+    
+    public void OnPointerLeave()
+    {
+        GetComponent<Image>().color = Color.white;
     }
 }
