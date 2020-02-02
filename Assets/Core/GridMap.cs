@@ -39,11 +39,6 @@ namespace Core
         rand = new System.Random(System.DateTime.Now.Millisecond);
     }
 
-    internal void setMapManager(MapManager mapManager)
-    {
-        this.mapManager = mapManager;
-    }
-
     public void Initialize(string theme, Vector3 basePosition, MapManager manager)
     {
         Theme = theme;

@@ -35,9 +35,12 @@ namespace Core
     void Start()
     {
         map = ScriptableObject.CreateInstance<GridMap>();
-        map.setMapManager(this);
         currentMap = 0;
         StartNextLevelOrWin();
+    }
+
+    private void AdjustCameraPosition(GridMap map)
+    {
         Camera.main.transform.position = PositionCam(map.TotalH, map.TotalW);
     }
 
@@ -51,6 +54,12 @@ namespace Core
         }
 
         return typeArray;
+    }
+
+    private void RestartCurrentLevel()
+    {
+        string mapUrl = $"Assets/Resources/Maps/level_{currentMap}.json";
+        LoadMap(mapUrl, $"level_{currentMap}");
     }
 
     private void StartNextLevelOrWin()
@@ -84,6 +93,7 @@ namespace Core
 
         map.Initialize(theme, Vector3.zero, this);
         map.ConstructTiles(ParseIntArray(mapIntArray, width));
+        AdjustCameraPosition(map);
 
         gameState = GameState.Playing;
         gameStarted = true;
