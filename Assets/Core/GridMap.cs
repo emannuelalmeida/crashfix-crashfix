@@ -24,12 +24,13 @@ public class GridMap : ScriptableObject
     public float TileLength { get { return tileLength; } }
 
     private const float tileLength = 1.6f;
+    private System.Random rand;
 
     private MapManager mapManager;
 
     public GridMap()
     {
-
+        rand = new System.Random(System.DateTime.Now.Millisecond);
     }
 
     public void Initialize(string theme, Vector3 basePosition, MapManager manager)
@@ -55,7 +56,8 @@ public class GridMap : ScriptableObject
         }
     }
 
-    public bool IsWalkablePosition(Position position){
+    public bool IsWalkablePosition(Position position)
+    {
         return tileMap[position.X, position.Y].IsWalkable;
     }
 
@@ -72,7 +74,7 @@ public class GridMap : ScriptableObject
                 resourceName = "wall";
                 break;
             case TileType.BREAK_BLOCK:
-                resourceName = "break_block";
+                resourceName = "vase";
                 break;
             case TileType.BREAK_START:
                 resourceName = "ground";
@@ -83,18 +85,18 @@ public class GridMap : ScriptableObject
                 breakerObj.GetComponent<PlayerActor>().Initialize(mapManager, new Position(x, y));
                 break;
             case TileType.FIX_BLOCK:
-                resourceName = "fix_block";
+                resourceName = "crate_broken";
                 break;
             case TileType.FIX_START:
                 resourceName = "ground";
                 var fixer = Resources.Load("Actors/fixer");
                 var fixerObj = Instantiate(fixer,
-                            BasePosition + new Vector3(tileLength * x - tileLength /2f, 2.4f, tileLength * y -tileLength/2f),
+                            BasePosition + new Vector3(tileLength * x - tileLength / 2f, 2.4f, tileLength * y - tileLength / 2f),
                             Quaternion.identity) as GameObject;
-                fixerObj.GetComponent<PlayerActor>().Initialize(mapManager, new Position(x,y));
+                fixerObj.GetComponent<PlayerActor>().Initialize(mapManager, new Position(x, y));
                 break;
             case TileType.BOTH_ACT_BLOCK:
-                resourceName = "both_act";
+                resourceName = "crate";
                 break;
             case TileType.BUTTON:
                 resourceName = "button";
@@ -120,6 +122,9 @@ public class GridMap : ScriptableObject
 
         try
         {
+            if (resourceName == "ground")
+                resourceName += rand.Next(1, 5);
+
             var tileObject = Instantiate(Resources.Load(BasePath + resourceName),
                         BasePosition + new Vector3(tileLength * x, 0, tileLength * y),
                         Quaternion.identity);
@@ -127,22 +132,29 @@ public class GridMap : ScriptableObject
 
             tileMap[x, y] = tile;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
+
+
             Debug.LogError(ex.Message);
-            var tileObject = Instantiate(Resources.Load(BasePath + "ground"),
+            var tileObject = Instantiate(Resources.Load(BasePath + "ground" + rand.Next(1, 5)),
                         BasePosition + new Vector3(tileLength * x, 0, tileLength * y),
                         Quaternion.identity);
+
             var tile = (tileObject as GameObject).GetComponent<Tile>();
 
             tileMap[x, y] = tile;
         }
 
-       
+
     }
 
     public Tile GetTile(int x, int y)
     {
-        return tileMap[x, y];
+        try
+        {
+            return tileMap[x, y];
+        }
+        catch { return null; }
     }
 }
