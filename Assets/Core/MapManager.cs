@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Core
@@ -56,10 +57,11 @@ namespace Core
         return typeArray;
     }
 
-    private void RestartCurrentLevel()
+    public void RestartCurrentLevel()
     {
-        string mapUrl = $"Assets/Resources/Maps/level_{currentMap}.json";
-        LoadMap(mapUrl, $"level_{currentMap}");
+            string mapUrl = $"Assets/Resources/Maps/level_{currentMap}.json";
+            LoadMap(mapUrl, $"level_{currentMap}");
+            restartButton(0f, false);
     }
 
     private void StartNextLevelOrWin()
@@ -91,6 +93,7 @@ namespace Core
         TimeRemaining = TimeSpan.FromSeconds(InitialTimeInSeconds);
         Debug.Log($"Loaded Level {mapData.name} with Width {width}, Theme: {theme}, Time: {InitialTimeInSeconds}");
 
+        map.ClearCurrentMap();
         map.Initialize(theme, Vector3.zero, this);
         map.ConstructTiles(ParseIntArray(mapIntArray, width));
         AdjustCameraPosition(map);
@@ -135,13 +138,6 @@ namespace Core
         restartButton(1f, true);
     }
 
-    public void Restart()
-    {
-        gameState = GameState.Playing;
-        TimeRemaining = TimeSpan.FromSeconds(InitialTimeInSeconds);
-        restartButton(0f, false);
-    }
-
     private void restartButton(float alpha, bool raycast)
     {
         var restart = GameObject.Find("RestartButton");
@@ -179,6 +175,7 @@ namespace Core
     public bool IsExitTile(PlayerActor character)
     {
         Tile tile = map.GetTile(character.Position.X, character.Position.Y);
+        Debug.Log($"Pos: {character.Position.X},{character.Position.Y}  Char:{character is Breaker}, tile: {tile.GetType()}");
         return tile.IsExitTile(character);
     }
 
@@ -197,6 +194,7 @@ namespace Core
         if (IsExitTile(map.Breaker) && IsExitTile(map.Fixer))
         {
             gameState = GameState.Victory;
+            gameStarted = false;
         }
     }
 }
