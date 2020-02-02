@@ -34,7 +34,7 @@ $UNITY_HOME/Unity -batchmode -nographics -executeMethod Editor.Builds.PerformWeb
                             sh '''
                                 git remote add originssh git@github.com:emannuelalmeida/crashfix-crashfix.git || true
                                 git fetch originssh
-                                git checkout -b ssh-master originssh/master
+                                git checkout -B ssh-master originssh/master
                                 git rm -r docs
                                 mv Build/crashfix-crashfix-web docs
                                 git add docs
