@@ -91,7 +91,7 @@ public class GridMap : ScriptableObject
                 resourceName = "ground";
                 var fixer = Resources.Load("Actors/fixer");
                 var fixerObj = Instantiate(fixer,
-                            basePosition + new Vector3(tileLength * x - tileLength / 2f, 2.4f, tileLength * y - tileLength / 2f),
+                            BasePosition + new Vector3(tileLength * x - tileLength / 2f, 2.4f, tileLength * y - tileLength / 2f),
                             Quaternion.identity) as GameObject;
                 fixerObj.GetComponent<PlayerActor>().Initialize(mapManager, new Position(x, y));
                 break;
@@ -125,8 +125,8 @@ public class GridMap : ScriptableObject
             if (resourceName == "ground")
                 resourceName += rand.Next(1, 5);
 
-            var tileObject = Instantiate(Resources.Load(basePath + resourceName),
-                        basePosition + new Vector3(tileLength * x, 0, tileLength * y),
+            var tileObject = Instantiate(Resources.Load(BasePath + resourceName),
+                        BasePosition + new Vector3(tileLength * x, 0, tileLength * y),
                         Quaternion.identity);
             var tile = (tileObject as GameObject).GetComponent<Tile>();
 
@@ -137,8 +137,8 @@ public class GridMap : ScriptableObject
 
 
             Debug.LogError(ex.Message);
-            var tileObject = Instantiate(Resources.Load(basePath + "ground" + rand.Next(1, 5)),
-                        basePosition + new Vector3(tileLength * x, 0, tileLength * y),
+            var tileObject = Instantiate(Resources.Load(BasePath + "ground" + rand.Next(1, 5)),
+                        BasePosition + new Vector3(tileLength * x, 0, tileLength * y),
                         Quaternion.identity);
 
             var tile = (tileObject as GameObject).GetComponent<Tile>();
