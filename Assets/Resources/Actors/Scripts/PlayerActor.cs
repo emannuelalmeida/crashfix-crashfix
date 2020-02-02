@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public abstract class PlayerActor : MonoBehaviour
 {
@@ -13,7 +14,18 @@ public abstract class PlayerActor : MonoBehaviour
 
     protected MapManager mapManager;
 
-    protected PlayerState playerState;
+    private PlayerState _playerState;
+    public readonly UnityEvent<PlayerState> PlayerStateEvents = new PlayerStateEvent();
+    protected PlayerState playerState
+    {
+        get { return _playerState; }
+        set
+        {
+            _playerState = value;
+            PlayerStateEvents.Invoke(value);
+        }
+    }
+
     protected Facing facing;
 
     public float movementSpeed = 0.1f;
