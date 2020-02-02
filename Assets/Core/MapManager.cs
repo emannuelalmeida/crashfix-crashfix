@@ -61,7 +61,8 @@ namespace Core
     {
             string nextMapUrl = $"Maps/level_{currentMap}";
             var mapData = Resources.Load<TextAsset>(nextMapUrl);
-            setButtonProperty("NextStageButton", 0f);
+            LoadMap(mapData);
+            setButtonProperty("RestartButton", 0f);
     }
 
     private void StartNextLevelOrWin()
