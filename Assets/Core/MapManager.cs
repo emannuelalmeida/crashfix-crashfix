@@ -61,7 +61,7 @@ namespace Core
     {
             string nextMapUrl = $"Maps/level_{currentMap}";
             var mapData = Resources.Load<TextAsset>(nextMapUrl);
-            restartButton(0f, false);
+            setButtonProperty("NextStageButton", 0f);
     }
 
     private void StartNextLevelOrWin()
@@ -79,6 +79,12 @@ namespace Core
     private void WinGameScreen()
     {
         //
+    }
+
+    public void NextStageButton()
+    {
+        setButtonProperty("NextStageButton", 0f);
+        StartNextLevelOrWin();
     }
 
     private void LoadMap(TextAsset mapData)
@@ -135,18 +141,24 @@ namespace Core
     private void gameOver()
     {
         gameState = GameState.GameOver;
-        restartButton(1f, true);
+        setButtonProperty("RestartButton", 1f);
+    }
+    public void Restart()
+    {
+        gameState = GameState.Playing;
+        TimeRemaining = TimeSpan.FromSeconds(InitialTimeInSeconds);
+        setButtonProperty("RestartButton",0f);
     }
 
-    private void restartButton(float alpha, bool raycast)
+    private void setButtonProperty(string name, float alpha)
     {
-        var restart = GameObject.Find("RestartButton");
+        var restart = GameObject.Find(name);
         var images = GameObject.FindObjectsOfType<Image>();
         foreach (var image in images)
         {
-            if (image.name == "RestartButton")
+            if (image.name == name)
             {
-                image.raycastTarget = raycast;
+                image.raycastTarget = alpha > 0f;
                 var temp = image.color;
                 temp.a = alpha;
                 image.color = temp;
@@ -195,6 +207,7 @@ namespace Core
         {
             gameState = GameState.Victory;
             gameStarted = false;
+            setButtonProperty("NextStageButton", 1f);
         }
     }
 }
