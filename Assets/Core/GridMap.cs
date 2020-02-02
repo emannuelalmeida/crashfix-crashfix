@@ -5,11 +5,15 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using System;
+using Assets.Actors;
 
 public class GridMap : ScriptableObject
 {
     public int Width { get; private set; }
     public int Height { get; private set; }
+
+    public Breaker Breaker { get; private set; }
+    public Fixer Fixer { get; private set; }
 
     public float TotalW => tileLength * (Width - 1);
 
@@ -31,6 +35,11 @@ public class GridMap : ScriptableObject
     public GridMap()
     {
         rand = new System.Random(System.DateTime.Now.Millisecond);
+    }
+
+    internal void setMapManager(MapManager mapManager)
+    {
+        this.mapManager = mapManager;
     }
 
     public void Initialize(string theme, Vector3 basePosition, MapManager manager)
@@ -82,7 +91,8 @@ public class GridMap : ScriptableObject
                 var breakerObj = Instantiate(breaker,
                             BasePosition + new Vector3(tileLength * x - tileLength / 2f, 2.4f, tileLength * y - tileLength / 2f),
                             Quaternion.identity) as GameObject;
-                breakerObj.GetComponent<PlayerActor>().Initialize(mapManager, new Position(x, y));
+                Breaker = breakerObj.GetComponent<Breaker>();
+                Breaker.Initialize(mapManager, new Position(x, y));
                 break;
             case TileType.FIX_BLOCK:
                 resourceName = "crate_broken";
@@ -93,7 +103,8 @@ public class GridMap : ScriptableObject
                 var fixerObj = Instantiate(fixer,
                             BasePosition + new Vector3(tileLength * x - tileLength / 2f, 2.4f, tileLength * y - tileLength / 2f),
                             Quaternion.identity) as GameObject;
-                fixerObj.GetComponent<PlayerActor>().Initialize(mapManager, new Position(x, y));
+                Fixer = fixerObj.GetComponent<Fixer>();
+                Fixer.Initialize(mapManager, new Position(x, y));
                 break;
             case TileType.BOTH_ACT_BLOCK:
                 resourceName = "crate";
@@ -145,7 +156,6 @@ public class GridMap : ScriptableObject
 
             tileMap[x, y] = tile;
         }
-
 
     }
 
