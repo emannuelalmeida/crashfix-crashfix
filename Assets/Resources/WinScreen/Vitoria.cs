@@ -10,7 +10,6 @@ public class Vitoria : MonoBehaviour
 
     public void GoToMainScreen()
     {
-        SceneManager.UnloadSceneAsync("Vitoria");
         SceneManager.LoadScene("MainScreen");
     }
 
