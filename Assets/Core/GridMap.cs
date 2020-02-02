@@ -74,7 +74,7 @@ public class GridMap : ScriptableObject
                 resourceName = "wall";
                 break;
             case TileType.BREAK_BLOCK:
-                resourceName = "break_block";
+                resourceName = "vase";
                 break;
             case TileType.BREAK_START:
                 resourceName = "ground";
@@ -85,7 +85,7 @@ public class GridMap : ScriptableObject
                 breakerObj.GetComponent<PlayerActor>().Initialize(mapManager, new Position(x, y));
                 break;
             case TileType.FIX_BLOCK:
-                resourceName = "fix_block";
+                resourceName = "crate_broken";
                 break;
             case TileType.FIX_START:
                 resourceName = "ground";
@@ -96,7 +96,7 @@ public class GridMap : ScriptableObject
                 fixerObj.GetComponent<PlayerActor>().Initialize(mapManager, new Position(x, y));
                 break;
             case TileType.BOTH_ACT_BLOCK:
-                resourceName = "both_act";
+                resourceName = "crate";
                 break;
             case TileType.BUTTON:
                 resourceName = "button";
@@ -151,6 +151,10 @@ public class GridMap : ScriptableObject
 
     public Tile GetTile(int x, int y)
     {
-        return tileMap[x, y];
+        try
+        {
+            return tileMap[x, y];
+        }
+        catch { return null; }
     }
 }

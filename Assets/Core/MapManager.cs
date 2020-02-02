@@ -64,12 +64,12 @@ public class MapManager : MonoBehaviour
 
     public void FixTile(int x, int y)
     {
-        map.GetTile(x, y).Fix();
+        map.GetTile(x, y)?.Fix();
     }
 
     public void BreakTile(int x, int y)
     {
-        map.GetTile(x, y).Break();
+        map.GetTile(x, y)?.Break();
     }
 
     // Update is called once per frame
@@ -83,7 +83,14 @@ public class MapManager : MonoBehaviour
     
     public bool CanMove(int x, int y)
     {
-        return map.IsWalkablePosition(new Position(x, y));
+        try
+        {
+            return map.IsWalkablePosition(new Position(x, y));
+        }
+        catch
+        {
+            return false;
+        }
     } 
 
     public Vector3 GetTilePosition(int x, int y)

@@ -17,7 +17,7 @@ public abstract class PlayerActor : MonoBehaviour
     protected Facing facing;
 
     public float movementSpeed = 0.1f;
-    protected float sensitivity = 0.3f;
+    protected float sensitivity = 0.15f;
 
     public void Initialize(MapManager mapManager, Position startPosition)
     {

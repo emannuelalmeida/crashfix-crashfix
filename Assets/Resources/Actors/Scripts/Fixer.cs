@@ -47,7 +47,7 @@ namespace Assets.Actors
 
         protected override void UpdateInteracting()
         {
-            Position interactPosition = Position;
+            Position interactPosition = new Position(Position.X, Position.Y);
             switch (facing)
             {
                 case Facing.UP:
@@ -64,7 +64,8 @@ namespace Assets.Actors
                     break;
             }
 
-            mapManager.FixTile(Position.X, Position.Y);
+            mapManager.FixTile(interactPosition.X, interactPosition.Y);
+            playerState = PlayerState.IDLE;
         }
     }
 }
