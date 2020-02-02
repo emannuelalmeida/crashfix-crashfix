@@ -33,12 +33,13 @@ $UNITY_HOME/Unity -batchmode -nographics -executeMethod Editor.Builds.PerformWeb
                         withEnv([ "GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no -o User=${SSH_USER} -i ${SSH_KEY}" ] ) {
                             sh '''
                                 git remote add originssh git@github.com:emannuelalmeida/crashfix-crashfix.git || true
-                                git checkout master
+                                git fetch originssh
+                                git checkout -b ssh-master originssh/master
                                 git rm -r docs
                                 mv Build/crashfix-crashfix-web docs
                                 git add docs
                                 git commit -m 'updating github pages'
-                                git push originssh master
+                                git push originssh ssh-master:master
                             '''
                         }
                     }                    

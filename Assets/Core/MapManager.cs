@@ -8,12 +8,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MapManager : MonoBehaviour
 {
     private GridMap map;
 
     public TimeSpan TimeRemaining { get; private set; }
+
+    int TimeInSeconds { get; set; }
 
     private bool gameStarted;
 
@@ -51,10 +54,11 @@ public class MapManager : MonoBehaviour
         int width = jsonObject.GetValue("width").Value<int>();
         int[] mapIntArray = jsonObject.SelectToken("layers[0].data").Values<int>().ToArray();
         string theme = jsonObject.SelectToken("properties[0]").Value<string>("value");
-        int timeInSeconds = jsonObject.SelectToken("properties[1]").Value<int>("value");
+        TimeInSeconds = jsonObject.SelectToken("properties[1]").Value<int>("value");
 
-        TimeRemaining = TimeSpan.FromSeconds(timeInSeconds);
-        Debug.Log($"Loaded Level {mapNumber} with Width {width}, Theme: {theme}, Time: {timeInSeconds}");
+        TimeRemaining = TimeSpan.FromSeconds(TimeInSeconds);
+       
+        Debug.Log($"Loaded Level {mapNumber} with Width {width}, Theme: {theme}, Time: {TimeInSeconds}");
 
         map.Initialize(theme, Vector3.zero, this);
         map.ConstructTiles(ParseIntArray(mapIntArray, width));
@@ -78,9 +82,18 @@ public class MapManager : MonoBehaviour
         if (gameStarted && TimeRemaining.TotalSeconds > 0)
         {
             TimeRemaining = TimeRemaining.Subtract(TimeSpan.FromSeconds(Time.deltaTime));
+            var timer = GameObject.Find("Timer").GetComponent<Text>();
+            timer.text = $"{TimeRemaining.Minutes.ToString("00")}:{TimeRemaining.Seconds.ToString("00")}";
+
+            if (TimeRemaining <= TimeSpan.FromSeconds(0.17 * TimeInSeconds))
+                timer.color = Color.red;
+            else if (TimeRemaining <= TimeSpan.FromSeconds(0.5 * TimeInSeconds))
+                timer.color = Color.yellow;
+            else
+                timer.color = Color.white;
         }
-    }  
-    
+    }
+
     public bool CanMove(int x, int y)
     {
         try
@@ -91,11 +104,11 @@ public class MapManager : MonoBehaviour
         {
             return false;
         }
-    } 
+    }
 
     public Vector3 GetTilePosition(int x, int y)
     {
-        return map.basePosition + new Vector3(map.TileLength * x, 0, map.TileLength * y);
+        return map.BasePosition + new Vector3(map.TileLength * x, 0, map.TileLength * y);
     }
 
     public void OnStepTile(int x, int y, PlayerActor character)

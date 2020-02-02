@@ -16,18 +16,14 @@ public class Position
 
     public Position(int x, int y)
     {
-        this.X = x;
-        this.Y = y;
+        X = x;
+        Y = y;
     }
 
-    public static Position operator +(Position p1, Position p2)
+    public static Position operator +(Position p1, Position p2) => new Position
     {
-        return new Position
-        {
-            X = p1.X + p2.X,
-            Y = p1.Y + p2.Y
-        };
-
-    }
+        X = p1.X + p2.X,
+        Y = p1.Y + p2.Y
+    };
 }
 

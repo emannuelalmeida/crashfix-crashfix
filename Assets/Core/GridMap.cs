@@ -17,10 +17,10 @@ public class GridMap : ScriptableObject
 
     private Tile[,] tileMap;
 
-    private string theme;
-    private string basePath => $"Tiles/Prefabs/{theme}/";
+    public string Theme { get; private set; }
+    private string BasePath => $"Tiles/Prefabs/{Theme}/";
 
-    public Vector3 basePosition { get; private set; }
+    public Vector3 BasePosition { get; private set; }
     public float TileLength { get { return tileLength; } }
 
     private const float tileLength = 1.6f;
@@ -35,9 +35,9 @@ public class GridMap : ScriptableObject
 
     public void Initialize(string theme, Vector3 basePosition, MapManager manager)
     {
-        this.theme = theme;
-        this.basePosition = basePosition;
-        this.mapManager = manager;
+        Theme = theme;
+        BasePosition = basePosition;
+        mapManager = manager;
     }
 
     public void ConstructTiles(TileType[,] tileArray)
@@ -80,7 +80,7 @@ public class GridMap : ScriptableObject
                 resourceName = "ground";
                 var breaker = Resources.Load("Actors/breaker");
                 var breakerObj = Instantiate(breaker,
-                            basePosition + new Vector3(tileLength * x - tileLength / 2f, 2.4f, tileLength * y - tileLength / 2f),
+                            BasePosition + new Vector3(tileLength * x - tileLength / 2f, 2.4f, tileLength * y - tileLength / 2f),
                             Quaternion.identity) as GameObject;
                 breakerObj.GetComponent<PlayerActor>().Initialize(mapManager, new Position(x, y));
                 break;
