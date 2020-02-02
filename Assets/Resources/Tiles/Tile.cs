@@ -10,13 +10,13 @@ public abstract class Tile : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public virtual void Fix()
@@ -29,14 +29,8 @@ public abstract class Tile : MonoBehaviour
         Debug.Log("Tile broken!");
     }
 
-    public virtual void OnStepBreaker()
+    public virtual bool IsExitTile(PlayerActor playerActor)
     {
-
-    }
-
-    public virtual void OnStepFixer()
-    {
-
+        return false;
     }
 }
-
