@@ -56,9 +56,11 @@ namespace Core
     private void StartNextLevelOrWin()
     {
         currentMap++;
-        string nextMapUrl = $"Assets/Resources/Maps/level_{currentMap}.json";
-        if (File.Exists(nextMapUrl))
-            LoadMap(nextMapUrl, $"level_{currentMap}");
+        string nextMapUrl = $"Maps/level_{currentMap}";
+        var mapData = Resources.Load<TextAsset>(nextMapUrl);
+
+        if (mapData != null)
+            LoadMap(mapData);
         else
             WinGameScreen();
     }
@@ -68,10 +70,9 @@ namespace Core
         //
     }
 
-    private void LoadMap(string mapFile, string mapName)
+    private void LoadMap(TextAsset mapData)
     {
-        var jsonContent = File.ReadAllText(mapFile);
-        var jsonObject = JObject.Parse(jsonContent);
+        var jsonObject = JObject.Parse(mapData.text);
 
         int width = jsonObject.GetValue("width").Value<int>();
         int[] mapIntArray = jsonObject.SelectToken("layers[0].data").Values<int>().ToArray();
@@ -79,7 +80,7 @@ namespace Core
         InitialTimeInSeconds = jsonObject.SelectToken("properties[1]").Value<int>("value");
 
         TimeRemaining = TimeSpan.FromSeconds(InitialTimeInSeconds);
-        Debug.Log($"Loaded Level {mapName} with Width {width}, Theme: {theme}, Time: {InitialTimeInSeconds}");
+        Debug.Log($"Loaded Level {mapData.name} with Width {width}, Theme: {theme}, Time: {InitialTimeInSeconds}");
 
         map.Initialize(theme, Vector3.zero, this);
         map.ConstructTiles(ParseIntArray(mapIntArray, width));
