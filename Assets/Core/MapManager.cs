@@ -13,12 +13,14 @@ using UnityEngine.UI;
 public class MapManager : MonoBehaviour
 {
     private GridMap map;
+    private GameState gameState;
 
     public TimeSpan TimeRemaining { get; private set; }
 
     int TimeInSeconds { get; set; }
 
     private bool gameStarted;
+    private int currentMap;
 
     static float Pow2(float x) => Mathf.Pow(x, 2.0f);
 
@@ -30,7 +32,8 @@ public class MapManager : MonoBehaviour
     void Start()
     {
         map = ScriptableObject.CreateInstance<GridMap>();
-        LoadMap(1);
+        currentMap = 0;
+        StartNextLevelOrWin();
         Camera.main.transform.position = PositionCam(map.TotalH, map.TotalW);
     }
 
@@ -46,23 +49,38 @@ public class MapManager : MonoBehaviour
         return typeArray;
     }
 
-    public void LoadMap(int mapNumber)
+    private void StartNextLevelOrWin()
     {
-        var jsonContent = File.ReadAllText($"Assets/Resources/Maps/level_{mapNumber}.json");
+        currentMap++;
+        string nextMapUrl = $"Assets/Resources/Maps/level_{currentMap}.json";
+        if (File.Exists(nextMapUrl))
+            LoadMap(nextMapUrl, $"level_{currentMap}");
+        else
+            WinGameScreen();
+    }
+
+    private void WinGameScreen()
+    {
+        //
+    }
+
+    private void LoadMap(string mapFile, string mapName)
+    {
+        var jsonContent = File.ReadAllText(mapFile);
         var jsonObject = JObject.Parse(jsonContent);
 
         int width = jsonObject.GetValue("width").Value<int>();
         int[] mapIntArray = jsonObject.SelectToken("layers[0].data").Values<int>().ToArray();
         string theme = jsonObject.SelectToken("properties[0]").Value<string>("value");
-        TimeInSeconds = jsonObject.SelectToken("properties[1]").Value<int>("value");
+        int timeInSeconds = jsonObject.SelectToken("properties[1]").Value<int>("value");
 
-        TimeRemaining = TimeSpan.FromSeconds(TimeInSeconds);
-       
-        Debug.Log($"Loaded Level {mapNumber} with Width {width}, Theme: {theme}, Time: {TimeInSeconds}");
+        TimeRemaining = TimeSpan.FromSeconds(timeInSeconds);
+        Debug.Log($"Loaded Level {mapName} with Width {width}, Theme: {theme}, Time: {timeInSeconds}");
 
         map.Initialize(theme, Vector3.zero, this);
         map.ConstructTiles(ParseIntArray(mapIntArray, width));
 
+        gameState = GameState.Playing;
         gameStarted = true;
     }
 
@@ -92,6 +110,8 @@ public class MapManager : MonoBehaviour
             else
                 timer.color = Color.white;
         }
+        else if (TimeRemaining.TotalSeconds < 1)
+            gameState = GameState.GameOver;
     }
 
     public bool CanMove(int x, int y)
@@ -111,13 +131,27 @@ public class MapManager : MonoBehaviour
         return map.BasePosition + new Vector3(map.TileLength * x, 0, map.TileLength * y);
     }
 
-    public void OnStepTile(int x, int y, PlayerActor character)
+    public bool IsExitTile(PlayerActor character)
     {
-        Tile tile = map.GetTile(x, y);
+        Tile tile = map.GetTile(character.Position.X, character.Position.Y);
+        return tile.IsExitTile(character);
+    }
 
-        if (character is Fixer)
-            tile.OnStepFixer();
-        else
-            tile.OnStepBreaker();
+    public bool IsItVictory()
+    {
+        return gameState.Equals(GameState.Victory);
+    }
+
+    public bool IsItGameOver()
+    {
+        return gameState.Equals(GameState.GameOver);
+    }
+
+    public void CheckVictoryCondition()
+    {
+        if (IsExitTile(map.Breaker) && IsExitTile(map.Fixer))
+        {
+            gameState = GameState.Victory;
+        }
     }
 }

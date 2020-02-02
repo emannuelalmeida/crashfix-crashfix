@@ -38,9 +38,9 @@ public abstract class PlayerActor : MonoBehaviour
         {
             playerState = PlayerState.IDLE;
             transform.position = targetVector;
-            mapManager.OnStepTile(targetPosition.X, targetPosition.Y, this);
             Position.X = targetPosition.X;
             Position.Y = targetPosition.Y;
+            mapManager.CheckVictoryCondition();
         }
     }
 
@@ -57,10 +57,11 @@ public abstract class PlayerActor : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
-        if (mapManager.TimeRemaining.TotalSeconds <= 0)
+        if (mapManager.IsItVictory())
+            playerState = PlayerState.CHEERING;
+        else if (mapManager.IsItGameOver())
             playerState = PlayerState.DEFEAT;
-
-        switch (playerState)
+        else switch (playerState)
         {
             case PlayerState.IDLE:
                 UpdateIdle();

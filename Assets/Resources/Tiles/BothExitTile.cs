@@ -15,4 +15,10 @@ public class BothExitTile : Tile
     {
         
     }
+
+    public override bool IsExitTile(PlayerActor playerActor)
+    {
+        return true;
+    }
+
 }
