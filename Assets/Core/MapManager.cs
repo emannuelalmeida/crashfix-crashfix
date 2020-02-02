@@ -13,7 +13,7 @@ using UnityEngine.UI;
 public class MapManager : MonoBehaviour
 {
     private GridMap map;
-    private GameState gameState;
+    private GameState gameState = GameState.Start;
 
     public TimeSpan TimeRemaining { get; private set; }
 
@@ -32,6 +32,7 @@ public class MapManager : MonoBehaviour
     void Start()
     {
         map = ScriptableObject.CreateInstance<GridMap>();
+        map.setMapManager(this);
         currentMap = 0;
         StartNextLevelOrWin();
         Camera.main.transform.position = PositionCam(map.TotalH, map.TotalW);
