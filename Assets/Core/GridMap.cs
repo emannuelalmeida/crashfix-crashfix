@@ -17,11 +17,15 @@ namespace Core
     public Breaker Breaker { get; private set; }
     public Fixer Fixer { get; private set; }
 
+    private GameObject breakerObj;
+    private GameObject fixerObj;
+
     public float TotalW => tileLength * (Width - 1);
 
     public float TotalH => tileLength * (Height - 1);
 
     private Tile[,] tileMap;
+    private List<GameObject> gameObjects = new List<GameObject>();
 
     public string Theme { get; private set; }
     private string BasePath => $"Tiles/Prefabs/{Theme}/";
@@ -37,11 +41,6 @@ namespace Core
     public GridMap()
     {
         rand = new System.Random(System.DateTime.Now.Millisecond);
-    }
-
-    internal void setMapManager(MapManager mapManager)
-    {
-        this.mapManager = mapManager;
     }
 
     public void Initialize(string theme, Vector3 basePosition, MapManager manager)
@@ -90,7 +89,7 @@ namespace Core
             case TileType.BREAK_START:
                 resourceName = "ground";
                 var breaker = Resources.Load("Actors/breaker");
-                var breakerObj = Instantiate(breaker,
+                breakerObj = Instantiate(breaker,
                             BasePosition + new Vector3(tileLength * x - tileLength / 2f, 2.4f, tileLength * y - tileLength / 2f),
                             Quaternion.identity) as GameObject;
                 Breaker = breakerObj.GetComponent<Breaker>();
@@ -102,7 +101,7 @@ namespace Core
             case TileType.FIX_START:
                 resourceName = "ground";
                 var fixer = Resources.Load("Actors/fixer");
-                var fixerObj = Instantiate(fixer,
+                fixerObj = Instantiate(fixer,
                             BasePosition + new Vector3(tileLength * x - tileLength / 2f, 2.4f, tileLength * y - tileLength / 2f),
                             Quaternion.identity) as GameObject;
                 Fixer = fixerObj.GetComponent<Fixer>();
@@ -136,18 +135,20 @@ namespace Core
         try
         {
             if (resourceName == "ground")
-                resourceName += rand.Next(1, 5);
+                resourceName += rand.Next(1, 4);
 
             var tileObject = Instantiate(Resources.Load(BasePath + resourceName),
                         BasePosition + new Vector3(tileLength * x, 0, tileLength * y),
                         Quaternion.identity);
-            var tile = (tileObject as GameObject).GetComponent<Tile>();
+            var tileReference = tileObject as GameObject;
+            var tile = tileReference.GetComponent<Tile>();
 
             tileMap[x, y] = tile;
+            gameObjects.Add(tileReference);
+
         }
         catch (Exception ex)
         {
-
 
             Debug.LogError(ex.Message);
             var tileObject = Instantiate(Resources.Load(BasePath + "ground" + rand.Next(1, 5)),
@@ -161,7 +162,16 @@ namespace Core
 
     }
 
-    public Tile GetTile(int x, int y)
+        public void ClearCurrentMap()
+        {
+            foreach (GameObject obj in gameObjects)
+                Destroy(obj);
+
+            Destroy(fixerObj);
+            Destroy(breakerObj);
+        }
+
+        public Tile GetTile(int x, int y)
     {
         try
         {
