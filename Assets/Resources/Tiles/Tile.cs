@@ -21,12 +21,12 @@ public abstract class Tile : MonoBehaviour
 
     public virtual void Fix()
     {
-
+        Debug.Log("Tile fixed!");
     }
 
     public virtual void Break()
     {
-
+        Debug.Log("Tile broken!");
     }
 
     public virtual void OnStepBreaker()

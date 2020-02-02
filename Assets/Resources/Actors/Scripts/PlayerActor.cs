@@ -101,5 +101,28 @@ public abstract class PlayerActor : MonoBehaviour
             targetVector.y = this.transform.position.y;
             targetVector += movementOffset;
         }
+
+        UpdateRotation();
+    }
+
+    private void UpdateRotation()
+    {
+        switch (facing)
+        {
+            case Facing.UP:
+                transform.localRotation = Quaternion.Euler(0, 180, 0);
+                break;
+            case Facing.DOWN:
+                transform.localRotation = Quaternion.Euler(0, 0, 0);
+                break;
+            case Facing.LEFT:
+                transform.localRotation = Quaternion.Euler(0, 270, 0);
+                break;
+            case Facing.RIGHT:
+                transform.localRotation = Quaternion.Euler(0, 90, 0);
+                break;
+            default:
+                break;
+        }
     }
 }

@@ -40,6 +40,9 @@ namespace Assets.Actors
             {
                 TryMove(Position.X + 1, Position.Y);
             }
+
+            else if (Input.GetButtonDown("DoStuff"))
+                this.playerState = PlayerState.INTERACTING;
         }
 
         protected override void UpdateInteracting()
@@ -61,7 +64,10 @@ namespace Assets.Actors
                     break;
             }
 
-            mapManager.FixTile(Position.X, Position.Y);
+            mapManager.BreakTile(Position.X, Position.Y);
+
+            //If animation finished:
+            playerState = PlayerState.IDLE;
         }
     }
 }

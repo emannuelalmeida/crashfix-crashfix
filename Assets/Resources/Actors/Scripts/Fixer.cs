@@ -40,6 +40,9 @@ namespace Assets.Actors
             {
                 TryMove(Position.X - 1, Position.Y);
             }
+
+            else if (Input.GetButtonDown("DoStuff"))
+                this.playerState = PlayerState.INTERACTING;
         }
 
         protected override void UpdateInteracting()
